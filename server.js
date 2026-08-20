@@ -133,7 +133,7 @@ function incrementAnalysisCount(userId) {
 function adminAuth(req, res, next) {
     const auth = req.headers.authorization;
     if (!auth || !auth.startsWith("Basic ")) {
-        res.setHeader("WWW-Authenticate", "Basic realm="Admin Dashboard"");
+        res.setHeader("WWW-Authenticate", 'Basic realm="Admin Dashboard"');
         return res.status(401).send("Unauthorized");
     }
 
@@ -143,7 +143,7 @@ function adminAuth(req, res, next) {
     if (username === (process.env.ADMIN_USER || "admin") && password === (process.env.ADMIN_PASS || "admin123")) {
         next();
     } else {
-        res.setHeader("WWW-Authenticate", "Basic realm="Admin Dashboard"");
+        res.setHeader("WWW-Authenticate", 'Basic realm="Admin Dashboard"');
         res.status(401).send("Unauthorized");
     }
 }
