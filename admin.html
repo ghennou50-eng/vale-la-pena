@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel de Control - ¿Vale la pena?</title>
+    <title>لوحة التحكم - هل يستحق الشراء؟</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         :root {
@@ -18,7 +18,7 @@
             --shadow: 0 18px 55px rgba(32,38,70,0.08);
         }
         body {
-            font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+            font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
             background: var(--bg);
             color: var(--text);
             min-height: 100vh;
@@ -108,7 +108,7 @@
             font-size: 14px;
         }
         th {
-            text-align: left;
+            text-align: right;
             padding: 12px 16px;
             color: var(--muted);
             font-size: 12px;
@@ -149,10 +149,6 @@
             background: rgba(116,123,140,0.1);
             color: var(--muted);
         }
-        .badge-pro {
-            background: rgba(245,158,11,0.12);
-            color: #f59e0b;
-        }
         .loading {
             text-align: center;
             padding: 40px;
@@ -169,7 +165,7 @@
             font-size: 14px;
         }
         .refresh-btn {
-            float: right;
+            float: left;
             padding: 8px 16px;
             border: none;
             border-radius: 10px;
@@ -194,57 +190,55 @@
 </head>
 <body>
     <div class="header">
-        <h1>📊 Panel de Control</h1>
-        <p>Estadísticas de ¿Vale la pena?</p>
+        <h1>📊 لوحة التحكم</h1>
+        <p>إحصائيات موقع هل يستحق الشراء؟</p>
     </div>
 
     <div class="container">
         <div class="stats-grid" id="statsGrid">
-            <div class="loading">Cargando estadísticas...</div>
+            <div class="loading">جاري تحميل الإحصائيات...</div>
         </div>
 
         <div class="section">
-            <h2>👤 Usuarios Registrados <button class="refresh-btn" onclick="loadData()">🔄 Actualizar</button></h2>
+            <h2>👤 المستخدمون المسجلون <button class="refresh-btn" onclick="loadData()">🔄 تحديث</button></h2>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>ID</th>
-                            <th>Nombre</th>
-                            <th>Email</th>
-                            <th>Tipo</th>
-                            <th>Plan</th>
-                            <th>Análisis hoy</th>
-                            <th>Acción</th>
+                            <th>المعرف</th>
+                            <th>الاسم</th>
+                            <th>البريد الإلكتروني</th>
+                            <th>نوع التسجيل</th>
+                            <th>تاريخ التسجيل</th>
                         </tr>
                     </thead>
                     <tbody id="usersTable">
-                        <tr><td colspan="5" class="loading">Cargando...</td></tr>
+                        <tr><td colspan="5" class="loading">جاري التحميل...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
         <div class="section">
-            <h2>🌐 Últimas Visitas</h2>
+            <h2>🌐 آخر الزيارات</h2>
             <div style="overflow-x: auto;">
                 <table>
                     <thead>
                         <tr>
-                            <th>Fecha</th>
-                            <th>IP</th>
-                            <th>Página</th>
-                            <th>Usuario</th>
+                            <th>التاريخ</th>
+                            <th>عنوان IP</th>
+                            <th>الصفحة</th>
+                            <th>نوع الزائر</th>
                         </tr>
                     </thead>
                     <tbody id="visitsTable">
-                        <tr><td colspan="4" class="loading">Cargando...</td></tr>
+                        <tr><td colspan="4" class="loading">جاري التحميل...</td></tr>
                     </tbody>
                 </table>
             </div>
         </div>
 
-        <a href="/" class="back-link">← Volver al sitio</a>
+        <a href="/" class="back-link">← العودة إلى الموقع</a>
     </div>
 
     <script>
@@ -264,7 +258,7 @@
                 if (usersData.success) renderUsers(usersData.users);
                 if (visitsData.success) renderVisits(visitsData.visits);
             } catch (e) {
-                document.getElementById("statsGrid").innerHTML = "<p style='color:#e05252'>Error cargando datos</p>";
+                document.getElementById("statsGrid").innerHTML = "<p style='color:#e05252'>خطأ في تحميل البيانات</p>";
             }
         }
 
@@ -272,61 +266,41 @@
             document.getElementById("statsGrid").innerHTML = `
                 <div class="stat-card">
                     <div class="stat-icon blue">👁️</div>
-                    <div class="stat-value">${s.totalVisits.toLocaleString()}</div>
-                    <div class="stat-label">Visitas totales</div>
+                    <div class="stat-value">${s.totalVisits.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">إجمالي الزيارات</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon green">📅</div>
-                    <div class="stat-value">${s.todayVisits.toLocaleString()}</div>
-                    <div class="stat-label">Visitas hoy</div>
+                    <div class="stat-value">${s.todayVisits.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">زيارات اليوم</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon purple">🧑‍💻</div>
-                    <div class="stat-value">${s.uniqueVisitors.toLocaleString()}</div>
-                    <div class="stat-label">Visitantes únicos</div>
+                    <div class="stat-value">${s.uniqueVisitors.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">زوار فريدون</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon teal">👤</div>
-                    <div class="stat-value">${s.totalUsers}</div>
-                    <div class="stat-label">Usuarios registrados</div>
+                    <div class="stat-value">${s.totalUsers.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">مستخدمون مسجلون</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon orange">🔵</div>
-                    <div class="stat-value">${s.googleUsers}</div>
-                    <div class="stat-label">Con Google</div>
+                    <div class="stat-value">${s.googleUsers.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">عبر Google</div>
                 </div>
                 <div class="stat-card">
                     <div class="stat-icon red">📧</div>
-                    <div class="stat-value">${s.emailUsers}</div>
-                    <div class="stat-label">Con Email</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon orange">⭐</div>
-                    <div class="stat-value">${s.proUsers}</div>
-                    <div class="stat-label">Usuarios Pro</div>
-                </div>
-                <div class="stat-card">
-                    <div class="stat-icon" style="background:rgba(99,91,255,0.1)">🆓</div>
-                    <div class="stat-value">${s.freeUsers}</div>
-                    <div class="stat-label">Usuarios Free</div>
+                    <div class="stat-value">${s.emailUsers.toLocaleString("ar-SA")}</div>
+                    <div class="stat-label">عبر البريد</div>
                 </div>
             `;
-        }
-
-        async function upgradeUser(id, plan) {
-            try {
-                const endpoint = plan === "pro" ? `/api/admin/users/${id}/upgrade` : `/api/admin/users/${id}/downgrade`;
-                await fetch(endpoint, { method: "POST" });
-                loadData();
-            } catch (e) {
-                alert("Error actualizando usuario");
-            }
         }
 
         function renderUsers(users) {
             const tbody = document.getElementById("usersTable");
             if (!users.length) {
-                tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;color:#747b8c">No hay usuarios registrados</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;color:#747b8c">لا يوجد مستخدمون مسجلون</td></tr>';
                 return;
             }
             tbody.innerHTML = users.map(u => `
@@ -334,15 +308,8 @@
                     <td>#${u.id}</td>
                     <td><strong>${escapeHtml(u.name)}</strong></td>
                     <td>${escapeHtml(u.email)}</td>
-                    <td><span class="badge ${u.google_id ? 'badge-google' : 'badge-email'}">${u.google_id ? 'Google' : 'Email'}</span></td>
-                    <td><span class="badge ${u.plan === 'pro' ? 'badge-pro' : 'badge-guest'}">${u.plan === 'pro' ? '⭐ Pro' : '🆓 Free'}</span></td>
-                    <td>${u.analysis_count || 0}/5</td>
-                    <td>
-                        <button onclick="upgradeUser(${u.id}, '${u.plan === 'pro' ? 'free' : 'pro'}')" 
-                            style="padding:6px 12px;border:none;border-radius:8px;background:${u.plan === 'pro' ? '#e05252' : '#f59e0b'};color:#fff;font-size:12px;font-weight:700;cursor:pointer;">
-                            ${u.plan === 'pro' ? 'Bajar a Free' : 'Subir a Pro'}
-                        </button>
-                    </td>
+                    <td><span class="badge ${u.google_id ? 'badge-google' : 'badge-email'}">${u.google_id ? 'Google' : 'البريد'}</span></td>
+                    <td>${formatDate(u.created_at)}</td>
                 </tr>
             `).join("");
         }
@@ -350,7 +317,7 @@
         function renderVisits(visits) {
             const tbody = document.getElementById("visitsTable");
             if (!visits.length) {
-                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#747b8c">No hay visitas registradas</td></tr>';
+                tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#747b8c">لا توجد زيارات مسجلة</td></tr>';
                 return;
             }
             tbody.innerHTML = visits.map(v => `
@@ -358,7 +325,7 @@
                     <td>${formatDate(v.date)}</td>
                     <td>${v.ip}</td>
                     <td>${v.path}</td>
-                    <td><span class="badge ${v.hasUser ? 'badge-visit' : 'badge-guest'}">${v.hasUser ? '👤 Usuario' : '👤 Invitado'}</span></td>
+                    <td><span class="badge ${v.hasUser ? 'badge-visit' : 'badge-guest'}">${v.hasUser ? '👤 مستخدم' : '👤 زائر'}</span></td>
                 </tr>
             `).join("");
         }
@@ -371,7 +338,7 @@
 
         function formatDate(dateStr) {
             const d = new Date(dateStr);
-            return d.toLocaleDateString("es-ES", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit" });
+            return d.toLocaleDateString("ar-SA", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
         }
 
         loadData();
