@@ -1,60 +1,29 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <title>¿Vale la pena?</title>
-
     <link rel="stylesheet" href="style.css">
-
-    <base target="_blank">
+<base target="_blank">
 </head>
 
 <body>
 
 <header class="header">
-
-    <div class="logo">
-
-        <img
-            src="logo-horizontal.png"
-            alt="¿Vale la pena?"
-        >
-
+    <div class="logo" style="display: flex; align-items: center;">
+        <img src="logo-horizontal.png" alt="¿Vale la pena?" style="height: 60px; width: auto;">
     </div>
-
-
     <div class="header-right">
-
-        <div class="header-text">
-            Analiza antes de comprar
-        </div>
-
-
+        <div class="header-text">Analiza antes de comprar</div>
         <div id="authSection">
-
-            <a
-                href="/login.html"
-                class="auth-btn"
-            >
-                Iniciar Sesión
-            </a>
-
+            <a href="/login.html" class="auth-btn">Iniciar Sesión</a>
         </div>
-
     </div>
-
 </header>
 
 
 <main class="main">
-
-
-    <!-- =========================================
-         HERO
-         ========================================= -->
 
     <section class="hero">
 
@@ -62,17 +31,12 @@
             🤖 Análisis con Inteligencia Artificial
         </div>
 
-
-        <h1>
-            ¿Realmente vale la pena?
-        </h1>
-
+        <h1>¿Realmente vale la pena?</h1>
 
         <p>
             Analiza cualquier producto antes de comprarlo
             y descubre si realmente merece la pena.
         </p>
-
 
         <div class="search-box">
 
@@ -83,41 +47,25 @@
                 autocomplete="off"
             >
 
-
             <button id="analyzeButton">
                 Analizar
             </button>
 
         </div>
 
-
         <div class="examples">
 
-            <span>
-                Prueba:
-            </span>
+            <span>Prueba:</span>
 
-
-            <button
-                class="example"
-                data-product="Tesla Model 3"
-            >
+            <button class="example" data-product="Tesla Model 3">
                 Tesla Model 3
             </button>
 
-
-            <button
-                class="example"
-                data-product="iPhone 17 Pro Max"
-            >
+            <button class="example" data-product="iPhone 17 Pro Max">
                 iPhone 17 Pro Max
             </button>
 
-
-            <button
-                class="example"
-                data-product="PlayStation 5"
-            >
+            <button class="example" data-product="PlayStation 5">
                 PlayStation 5
             </button>
 
@@ -126,53 +74,28 @@
     </section>
 
 
-
-    <!-- =========================================
-         LOADING
-         ========================================= -->
-
-    <section
-        id="loading"
-        class="loading hidden"
-    >
+    <section id="loading" class="loading hidden">
 
         <div class="spinner"></div>
 
-
-        <p>
-            Analizando el producto...
-        </p>
+        <p>Analizando el producto...</p>
 
     </section>
 
 
-
-    <!-- =========================================
-         RESULTADO
-         ========================================= -->
-
-    <section
-        id="result"
-        class="result hidden"
-    >
-
+    <section id="result" class="result hidden">
 
         <div class="result-header">
 
             <div>
-
                 <span class="small-title">
                     PRODUCTO ANALIZADO
                 </span>
 
-
                 <h2 id="productName"></h2>
 
-
                 <span id="productType"></span>
-
             </div>
-
 
             <div class="ai-icon">
                 ✨ IA
@@ -181,32 +104,23 @@
         </div>
 
 
-
-        <!-- =====================================
-             PUNTUACIÓN
-             ===================================== -->
+        <!-- PUNTUACIÓN -->
 
         <div class="score-card">
 
             <div class="score-circle">
 
-                <span id="score">
-                    --
-                </span>
+                <span id="score">--</span>
 
-                <small>
-                    /10
-                </small>
+                <small>/10</small>
 
             </div>
-
 
             <div class="score-info">
 
                 <h3 id="verdict">
                     Analizando...
                 </h3>
-
 
                 <p>
                     Evaluación basada en varios criterios.
@@ -217,166 +131,103 @@
         </div>
 
 
-
-        <!-- =====================================
-             PRECIO
-             ===================================== -->
+        <!-- PRECIO -->
 
         <div class="data-section">
 
-            <h3>
-                💰 Precio en España
-            </h3>
+            <h3>💰 Precio en España</h3>
 
-
-            <div
-                id="price"
-                class="price"
-            >
+            <div id="price" class="price">
                 --
             </div>
 
         </div>
 
 
-
-        <!-- =====================================
-             CRITERIOS
-             ===================================== -->
+        <!-- CRITERIOS -->
 
         <div class="data-section">
 
-            <h3>
-                📊 Evaluación
-            </h3>
+            <h3>📊 Evaluación</h3>
 
-
-            <div
-                id="criteria"
-                class="criteria"
-            ></div>
+            <div id="criteria" class="criteria"></div>
 
         </div>
 
 
-
-        <!-- =====================================
-             ESPECIFICACIONES
-             ===================================== -->
+        <!-- ESPECIFICACIONES -->
 
         <div class="data-section">
 
-            <h3>
-                ⚙️ Especificaciones
-            </h3>
+            <h3>⚙️ Especificaciones</h3>
 
-
-            <div
-                id="specifications"
-                class="specifications"
-            ></div>
+            <div id="specifications" class="specifications"></div>
 
         </div>
 
 
-
-        <!-- =====================================
-             VENTAJAS
-             ===================================== -->
+        <!-- VENTAJAS -->
 
         <div class="data-section">
 
-            <h3>
-                ✅ Ventajas
-            </h3>
-
+            <h3>✅ Ventajas</h3>
 
             <ul id="advantages"></ul>
 
         </div>
 
 
-
-        <!-- =====================================
-             DESVENTAJAS
-             ===================================== -->
+        <!-- DESVENTAJAS -->
 
         <div class="data-section">
 
-            <h3>
-                ❌ Desventajas
-            </h3>
-
+            <h3>❌ Desventajas</h3>
 
             <ul id="disadvantages"></ul>
 
         </div>
 
 
-
-        <!-- =====================================
-             PARA QUIÉN
-             ===================================== -->
+        <!-- PARA QUIÉN -->
 
         <div class="audience-grid">
 
-
             <div class="data-section">
 
-                <h3>
-                    👤 ¿Para quién merece la pena?
-                </h3>
-
+                <h3>👤 ¿Para quién merece la pena?</h3>
 
                 <p id="forWho"></p>
 
             </div>
 
 
-
             <div class="data-section">
 
-                <h3>
-                    🚫 ¿Para quién no?
-                </h3>
-
+                <h3>🚫 ¿Para quién no?</h3>
 
                 <p id="notForWho"></p>
 
             </div>
 
-
         </div>
 
 
-
-        <!-- =====================================
-             VEREDICTO
-             ===================================== -->
+        <!-- VEREDICTO -->
 
         <div class="verdict-box">
 
-            <h3>
-                🏁 Veredicto
-            </h3>
-
+            <h3>🏁 Veredicto</h3>
 
             <p id="finalVerdict"></p>
 
         </div>
 
 
-
-        <!-- =====================================
-             RESUMEN
-             ===================================== -->
+        <!-- RESUMEN -->
 
         <div class="summary-box">
 
-            <h3>
-                📝 Resumen
-            </h3>
-
+            <h3>📝 Resumen</h3>
 
             <p id="summary"></p>
 
@@ -385,48 +236,20 @@
     </section>
 
 
-
-    <!-- =========================================
-         HISTORIAL
-         ========================================= -->
-
-    <section
-        id="historySection"
-        class="history-section hidden"
-    >
-
-        <h2>
-            📚 Tus análisis guardados
-        </h2>
-
-
-        <div
-            id="historyList"
-            class="history-list"
-        ></div>
-
+    <!-- HISTORIAL DE ANÁLISIS (solo para usuarios logueados) -->
+    <section id="historySection" class="history-section hidden">
+        <h2>📚 Tus análisis guardados</h2>
+        <div id="historyList" class="history-list"></div>
     </section>
 
 
-
-    <!-- =========================================
-         INFO
-         ========================================= -->
-
     <section class="info">
-
 
         <div class="info-item">
 
-            <div class="info-icon">
-                🔍
-            </div>
+            <div class="info-icon">🔍</div>
 
-
-            <h3>
-                Analiza
-            </h3>
-
+            <h3>Analiza</h3>
 
             <p>
                 Introduce cualquier producto.
@@ -435,18 +258,11 @@
         </div>
 
 
-
         <div class="info-item">
 
-            <div class="info-icon">
-                🤖
-            </div>
+            <div class="info-icon">🤖</div>
 
-
-            <h3>
-                IA
-            </h3>
-
+            <h3>IA</h3>
 
             <p>
                 Obtén una evaluación inteligente.
@@ -455,18 +271,11 @@
         </div>
 
 
-
         <div class="info-item">
 
-            <div class="info-icon">
-                💰
-            </div>
+            <div class="info-icon">💰</div>
 
-
-            <h3>
-                Decide mejor
-            </h3>
-
+            <h3>Decide mejor</h3>
 
             <p>
                 Compra con más información.
@@ -474,23 +283,20 @@
 
         </div>
 
-
     </section>
 
 </main>
 
 
+    </div>
+</div>
 
 <footer>
-
     © 2026 ¿Vale la pena?
-
 </footer>
-
 
 
 <script src="script.js"></script>
 
 </body>
-
 </html>
