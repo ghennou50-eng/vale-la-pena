@@ -5,13 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>¿Vale la pena?</title>
     <link rel="stylesheet" href="style.css">
+<base target="_blank">
 </head>
 
 <body>
 
 <header class="header">
     <div class="logo">¿Vale la pena? <span class="by-credit">by GHENNOU</span></div>
-    <div class="header-text">Analiza antes de comprar</div>
+    <div class="header-right">
+        <div class="header-text">Analiza antes de comprar</div>
+        <div id="authSection">
+            <a href="/login.html" class="auth-btn">Iniciar Sesión</a>
+        </div>
+    </div>
 </header>
 
 
@@ -225,6 +231,13 @@
 
         </div>
 
+    </section>
+
+
+    <!-- HISTORIAL DE ANÁLISIS (solo para usuarios logueados) -->
+    <section id="historySection" class="history-section hidden">
+        <h2>📚 Tus análisis guardados</h2>
+        <div id="historyList" class="history-list"></div>
     </section>
 
 

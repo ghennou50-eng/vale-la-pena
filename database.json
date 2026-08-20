@@ -1,0 +1,89 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "email": "ghennou50@gmail.com",
+      "name": "moha",
+      "password": "$2a$10$qQXsv5U1CJ9kU4NidooVZeH6tWqpi0ZVrEsYTRxztc3XxlAdxBZ4O",
+      "google_id": null,
+      "avatar": null,
+      "created_at": "2026-08-20T12:32:28.752Z"
+    }
+  ],
+  "analyses": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "product_name": "Tesla Model 3",
+      "result": {
+        "producto": "Tesla Model 3",
+        "tipo": "coche eléctrico",
+        "puntuacion": 9.1,
+        "criterios": {
+          "precio_valor": 1.9,
+          "calidad_especificaciones": 1.8,
+          "rendimiento_utilidad": 1.9,
+          "competencia": 1.7,
+          "mercado_espanol": 1.8
+        },
+        "precio_espana": {
+          "min": 33.37,
+          "max": 57.49,
+          "confirmado": true,
+          "fuente": {
+            "nombre": "Diariomotor",
+            "url": "https://www.diariomotor.com/coche/tesla-model-3"
+          }
+        },
+        "moneda": "EUR",
+        "especificaciones": [
+          {
+            "nombre": "Autonomía",
+            "valor": "520 km"
+          },
+          {
+            "nombre": "Batería",
+            "valor": "60,5 kWh"
+          },
+          {
+            "nombre": "Potencia",
+            "valor": "170 kW"
+          },
+          {
+            "nombre": "Velocidad máxima",
+            "valor": "200 km/h"
+          },
+          {
+            "nombre": "0-100 km/h",
+            "valor": "6 segundos"
+          },
+          {
+            "nombre": "Red de carga",
+            "valor": "Supercharger"
+          },
+          {
+            "nombre": "Tecnología",
+            "valor": "Actualizaciones over-the-air, conducción autónoma total supervisada"
+          }
+        ],
+        "ventajas": [
+          "Eficiencia y autonomía amplia",
+          "Tecnología avanzada y actualizaciones",
+          "Conducción autónoma total supervisada"
+        ],
+        "desventajas": [
+          "Precio alto en algunas versiones",
+          "Limitaciones en la autonomía en versiones con tracción integral",
+          "No hay versiones con tracción trasera en todas las regiones"
+        ],
+        "para_quien": "Compradores de coches eléctricos que buscan eficiencia y autonomía amplia",
+        "no_para_quien": "Compradores que buscan un coche con un precio muy bajo",
+        "veredicto": "Merece la pena.",
+        "resumen": "El Tesla Model 3 es un coche eléctrico con una excelente relación calidad-precio, eficiencia y autonomía amplia, y tecnología avanzada. Es ideal para compradores que buscan un coche con estas características."
+      },
+      "created_at": "2026-08-20T12:32:47.399Z"
+    }
+  ],
+  "nextUserId": 2,
+  "nextAnalysisId": 2
+}

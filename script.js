@@ -118,7 +118,8 @@ async function analyzeProduct() {
 
                     headers: {
                         "Content-Type":
-                            "application/json"
+                            "application/json",
+                        ...(currentToken ? { "Authorization": "Bearer " + currentToken } : {})
                     },
 
                     body: JSON.stringify({
@@ -878,3 +879,263 @@ async function analyzeProduct() {
     }
 
 }
+
+
+// ==================================================
+// AUTHENTICATION
+// ==================================================
+
+const authSection = document.getElementById("authSection");
+const historySection = document.getElementById("historySection");
+const historyList = document.getElementById("historyList");
+
+let currentUser = null;
+let currentToken = localStorage.getItem("token");
+
+async function checkAuth() {
+    currentToken = localStorage.getItem("token");
+    if (!currentToken) {
+        updateAuthUI(null);
+        return;
+    }
+
+    try {
+        const res = await fetch("/api/me", {
+            headers: { "Authorization": "Bearer " + currentToken }
+        });
+        const data = await res.json();
+        if (data.success && data.user) {
+            currentUser = data.user;
+            localStorage.setItem("user", JSON.stringify(data.user));
+            updateAuthUI(data.user);
+            loadHistory();
+        } else {
+            localStorage.removeItem("token");
+            localStorage.removeItem("user");
+            updateAuthUI(null);
+        }
+    } catch (e) {
+        updateAuthUI(null);
+    }
+}
+
+function updateAuthUI(user) {
+    if (!authSection) return;
+
+    if (user) {
+        authSection.innerHTML = `
+            <div class="user-bar">
+                <span class="user-name">👋 ${escapeHtml(user.name)}</span>
+                <button class="logout-btn" onclick="logout()">Salir</button>
+            </div>
+        `;
+    } else {
+        authSection.innerHTML = `
+            <a href="/login.html" class="auth-btn">Iniciar Sesión</a>
+        `;
+    }
+}
+
+function logout() {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    currentUser = null;
+    currentToken = null;
+    window.location.reload();
+}
+
+function escapeHtml(text) {
+    const div = document.createElement("div");
+    div.textContent = text;
+    return div.innerHTML;
+}
+
+// ==================================================
+// ANALYSIS HISTORY
+// ==================================================
+
+async function loadHistory() {
+    if (!currentToken || !historySection || !historyList) return;
+
+    try {
+        const res = await fetch("/api/analyses", {
+            headers: { "Authorization": "Bearer " + currentToken }
+        });
+        const data = await res.json();
+
+        if (!data.success || !data.analyses || data.analyses.length === 0) {
+            historySection.classList.add("hidden");
+            return;
+        }
+
+        historySection.classList.remove("hidden");
+        historyList.innerHTML = "";
+
+        data.analyses.forEach(item => {
+            const card = document.createElement("div");
+            card.className = "history-card";
+
+            const result = item.result || {};
+            const score = result.puntuacion ?? "--";
+
+            card.innerHTML = `
+                <div class="history-info">
+                    <div class="history-title">${escapeHtml(item.product_name)}</div>
+                    <div class="history-date">${formatDate(item.created_at)}</div>
+                </div>
+                <div class="history-score">${score}</div>
+                <button class="history-delete" onclick="event.stopPropagation(); deleteHistoryItem(${item.id})" title="Eliminar">🗑</button>
+            `;
+
+            card.addEventListener("click", () => displaySavedAnalysis(result, item.product_name));
+            historyList.appendChild(card);
+        });
+    } catch (e) {
+        console.log("Error cargando historial:", e);
+    }
+}
+
+function formatDate(dateStr) {
+    const d = new Date(dateStr);
+    return d.toLocaleDateString("es-ES", { day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+}
+
+async function deleteHistoryItem(id) {
+    if (!confirm("¿Eliminar este análisis?")) return;
+    try {
+        await fetch("/api/analyses/" + id, {
+            method: "DELETE",
+            headers: { "Authorization": "Bearer " + currentToken }
+        });
+        loadHistory();
+    } catch (e) {
+        console.log("Error eliminando:", e);
+    }
+}
+
+function displaySavedAnalysis(a, productName) {
+    // Populate the result section with saved data
+    document.getElementById("productName").textContent = a.producto || productName;
+    document.getElementById("productType").textContent = a.tipo || "";
+    document.getElementById("score").textContent = a.puntuacion ?? "--";
+    document.getElementById("verdict").textContent = a.veredicto || "Análisis completado";
+
+    // Price
+    const priceEl = document.getElementById("price");
+    priceEl.innerHTML = "";
+    const priceData = a.precio_espana;
+    const hasValidPrice = priceData && typeof priceData === "object" && !isNaN(Number(priceData.min)) && Number(priceData.min) > 0;
+
+    if (hasValidPrice) {
+        const formatEUR = value => Number(value).toLocaleString("es-ES") + " €";
+        const min = Number(priceData.min);
+        const max = priceData.max !== undefined && priceData.max !== null && !isNaN(Number(priceData.max)) ? Number(priceData.max) : min;
+
+        const priceMain = document.createElement("div");
+        priceMain.className = "price-main";
+        priceMain.textContent = max > min ? formatEUR(min) + " - " + formatEUR(max) : formatEUR(min);
+        priceEl.appendChild(priceMain);
+
+        const priceMeta = document.createElement("div");
+        priceMeta.className = "price-meta";
+
+        const badge = document.createElement("span");
+        badge.className = priceData.confirmado ? "price-badge price-badge-confirmed" : "price-badge price-badge-estimated";
+        badge.textContent = priceData.confirmado ? "✅ Precio oficial" : "ℹ️ Precio orientativo";
+        priceMeta.appendChild(badge);
+
+        if (priceData.fuente && priceData.fuente.nombre) {
+            if (priceData.fuente.url) {
+                const sourceLink = document.createElement("a");
+                sourceLink.className = "price-source";
+                sourceLink.href = priceData.fuente.url;
+                sourceLink.target = "_blank";
+                sourceLink.rel = "noopener noreferrer";
+                sourceLink.textContent = "Fuente: " + priceData.fuente.nombre;
+                priceMeta.appendChild(sourceLink);
+            } else {
+                const sourceText = document.createElement("span");
+                sourceText.className = "price-source";
+                sourceText.textContent = "Fuente: " + priceData.fuente.nombre;
+                priceMeta.appendChild(sourceText);
+            }
+        }
+        priceEl.appendChild(priceMeta);
+    } else {
+        const priceMain = document.createElement("div");
+        priceMain.className = "price-main";
+        priceMain.textContent = "Precio no disponible";
+        priceEl.appendChild(priceMain);
+    }
+
+    // Criteria
+    const criteriaEl = document.getElementById("criteria");
+    criteriaEl.innerHTML = "";
+    const criterionNames = {
+        precio_valor: "Precio y relación calidad/precio",
+        calidad_especificaciones: "Calidad y especificaciones",
+        rendimiento_utilidad: "Rendimiento y utilidad",
+        competencia: "Competencia y alternativas",
+        mercado_espanol: "Mercado español"
+    };
+    if (a.criterios) {
+        Object.entries(a.criterios).forEach(([key, value]) => {
+            const card = document.createElement("div");
+            card.className = "criterion";
+            card.innerHTML = `<span>${criterionNames[key] || key}</span><strong>${value}/2</strong>`;
+            criteriaEl.appendChild(card);
+        });
+    }
+
+    // Specifications
+    const specsEl = document.getElementById("specifications");
+    specsEl.innerHTML = "";
+    if (Array.isArray(a.especificaciones)) {
+        a.especificaciones.forEach(spec => {
+            const card = document.createElement("div");
+            card.className = "specification";
+            card.innerHTML = `<span>${spec.nombre || ""}</span><strong>${spec.valor || ""}</strong>`;
+            specsEl.appendChild(card);
+        });
+    }
+
+    // Advantages
+    const advEl = document.getElementById("advantages");
+    advEl.innerHTML = "";
+    if (Array.isArray(a.ventajas)) {
+        a.ventajas.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            advEl.appendChild(li);
+        });
+    }
+
+    // Disadvantages
+    const disEl = document.getElementById("disadvantages");
+    disEl.innerHTML = "";
+    if (Array.isArray(a.desventajas)) {
+        a.desventajas.forEach(item => {
+            const li = document.createElement("li");
+            li.textContent = item;
+            disEl.appendChild(li);
+        });
+    }
+
+    // Audience
+    document.getElementById("forWho").textContent = a.para_quien || "No disponible";
+    document.getElementById("notForWho").textContent = a.no_para_quien || "No disponible";
+
+    // Verdict & Summary
+    document.getElementById("finalVerdict").textContent = a.veredicto || "No disponible";
+    document.getElementById("summary").textContent = a.resumen || "No disponible";
+
+    // Show result
+    result.classList.remove("hidden");
+    result.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+// ==================================================
+// INIT
+// ==================================================
+
+checkAuth();
