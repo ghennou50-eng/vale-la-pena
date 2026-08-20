@@ -11,15 +11,11 @@
 <body>
 
 <header class="header">
-    <div class="logo">
-    <img src="logo-horizontal.png" alt="¿Vale la pena?" style="height: 52px; width: auto; display: block;">
-</div>
+    <div class="logo" style="display: flex; align-items: center;">
+        <img src="logo-horizontal.png" alt="¿Vale la pena?" style="height: 60px; width: auto;">
+    </div>
     <div class="header-right">
         <div class="header-text">Analiza antes de comprar</div>
-        <div id="limitsInfo" style="display:none;align-items:center;gap:8px;margin-right:8px;">
-            <span id="remainingBadge" style="font-size:12px;color:#747b8c;background:#f0f0f5;padding:5px 10px;border-radius:8px;font-weight:600;"></span>
-        </div>
-        <a href="/pricing.html" class="pricing-link" style="color:#f59e0b;text-decoration:none;font-size:13px;font-weight:700;margin-right:10px;">⭐ Pro</a>
         <div id="authSection">
             <a href="/login.html" class="auth-btn">Iniciar Sesión</a>
         </div>
@@ -292,16 +288,6 @@
 </main>
 
 
-<div id="limitModal" class="modal hidden">
-    <div class="modal-content">
-        <div class="modal-icon">🚫</div>
-        <h3>¡Límite alcanzado!</h3>
-        <p>Has usado tus <strong>5 análisis gratuitos</strong> de hoy.</p>
-        <p style="color:#747b8c;font-size:14px;margin-top:8px;">Hazte <strong>Pro</strong> para análisis ilimitados.</p>
-        <div class="modal-buttons">
-            <a href="/pricing.html" class="modal-btn modal-btn-primary">Ver planes Pro</a>
-            <button onclick="closeLimitModal()" class="modal-btn modal-btn-secondary">Cerrar</button>
-        </div>
     </div>
 </div>
 
