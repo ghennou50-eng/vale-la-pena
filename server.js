@@ -38,6 +38,118 @@ function saveDB(db) {
     }
 }
 
+// ==================================================
+// VISITOR TRACKING
+// ==================================================
+
+function getClientIP(req) {
+    return req.headers["x-forwarded-for"]?.split(",")[0]?.trim() 
+        || req.headers["x-real-ip"] 
+        || req.connection?.remoteAddress 
+        || "unknown";
+}
+
+function getUserAgent(req) {
+    return req.headers["user-agent"] || "unknown";
+}
+
+function getToday() {
+    return new Date().toISOString().split("T")[0];
+}
+
+function saveVisit(req, userId) {
+    if (!db.visits) db.visits = [];
+
+    const visit = {
+        id: db.visits.length + 1,
+        ip: getClientIP(req),
+        user_agent: getUserAgent(req),
+        path: req.path || req.url,
+        user_id: userId || null,
+        date: new Date().toISOString(),
+        day: getToday()
+    };
+
+    db.visits.push(visit);
+
+    // Keep only last 5000 visits to prevent file bloat
+    if (db.visits.length > 5000) {
+        db.visits = db.visits.slice(-5000);
+    }
+
+    saveDB(db);
+}
+
+// ==================================================
+// ANALYSIS LIMITS HELPER
+// ==================================================
+
+const FREE_DAILY_LIMIT = 5;
+
+function getTodayStr() {
+  return new Date().toISOString().split("T")[0];
+}
+
+function checkAnalysisLimit(userId) {
+  const user = db.users.find(u => u.id === userId);
+  if (!user) return { allowed: false, remaining: 0, reason: "Usuario no encontrado" };
+
+  if (user.plan === "pro") {
+    return { allowed: true, remaining: 9999, isPro: true };
+  }
+
+  const today = getTodayStr();
+  if (user.last_analysis_date !== today) {
+    user.analysis_count = 0;
+    user.last_analysis_date = today;
+    saveDB(db);
+  }
+
+  const remaining = Math.max(0, FREE_DAILY_LIMIT - user.analysis_count);
+
+  if (user.analysis_count >= FREE_DAILY_LIMIT) {
+    return { allowed: false, remaining: 0, isPro: false, limit: FREE_DAILY_LIMIT };
+  }
+
+  return { allowed: true, remaining: remaining, isPro: false, limit: FREE_DAILY_LIMIT };
+}
+
+function incrementAnalysisCount(userId) {
+  const user = db.users.find(u => u.id === userId);
+  if (!user) return;
+  const today = getTodayStr();
+  if (user.last_analysis_date !== today) {
+    user.analysis_count = 0;
+    user.last_analysis_date = today;
+  }
+  user.analysis_count++;
+  saveDB(db);
+}
+
+// ==================================================
+// ADMIN AUTH MIDDLEWARE
+// ==================================================
+
+function adminAuth(req, res, next) {
+    const auth = req.headers.authorization;
+    if (!auth || !auth.startsWith("Basic ")) {
+        res.setHeader("WWW-Authenticate", "Basic realm="Admin Dashboard"");
+        return res.status(401).send("Unauthorized");
+    }
+
+    const credentials = Buffer.from(auth.split(" ")[1], "base64").toString("utf-8");
+    const [username, password] = credentials.split(":");
+
+    if (username === (process.env.ADMIN_USER || "admin") && password === (process.env.ADMIN_PASS || "admin123")) {
+        next();
+    } else {
+        res.setHeader("WWW-Authenticate", "Basic realm="Admin Dashboard"");
+        res.status(401).send("Unauthorized");
+    }
+}
+
+
+
 let db = loadDB();
 
 // Ensure tables exist
@@ -52,6 +164,16 @@ if (!db.nextAnalysisId) db.nextAnalysisId = 1;
 app.use(cors());
 app.use(express.json());
 app.use(express.static(__dirname));
+
+// Track all page visits
+app.use((req, res, next) => {
+    // Skip API calls and static files
+    if (!req.path.startsWith("/api") && !req.path.startsWith("/auth") && req.path !== "/analyze" && !req.path.includes(".")) {
+        saveVisit(req, null);
+    }
+    next();
+});
+
 
 app.use(session({
   secret: process.env.SESSION_SECRET || "vale-la-pena-secret",
@@ -700,6 +822,22 @@ function validateAnalysis(analysis, knownResults) {
 // ANALYZE ENDPOINT (PRESERVED + AUTH OPTIONAL)
 // ==================================================
 app.post("/analyze", authenticateToken, async (req, res) => {
+  // Track this visit with user if logged in
+  saveVisit(req, req.user ? req.user.id : null);
+
+  // Check analysis limits for logged-in users
+  if (req.user) {
+    const limitCheck = checkAnalysisLimit(req.user.id);
+    if (!limitCheck.allowed) {
+      return res.status(429).json({
+        success: false,
+        message: "Has alcanzado el límite de análisis gratuitos por hoy. ¡Hazte Pro para análisis ilimitados!",
+        code: "LIMIT_REACHED",
+        limit: limitCheck.limit
+      });
+    }
+  }
+
   const product = req.body.product;
 
   if (!product) {
@@ -757,6 +895,7 @@ app.post("/analyze", authenticateToken, async (req, res) => {
   // Save analysis if user is logged in
   if (req.user) {
     try {
+      incrementAnalysisCount(req.user.id);
       const newAnalysis = {
         id: db.nextAnalysisId++,
         user_id: req.user.id,
