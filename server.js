@@ -927,6 +927,77 @@ app.get("/api", (req, res) => {
 // ==================================================
 // START
 // ==================================================
+
+// ==================================================
+// ADMIN DASHBOARD API
+// ==================================================
+
+app.get("/api/admin/stats", adminAuth, (req, res) => {
+    const visits = db.visits || [];
+    const today = getToday();
+
+    const totalVisits = visits.length;
+    const todayVisits = visits.filter(v => v.day === today).length;
+    const uniqueIPs = new Set(visits.map(v => v.ip)).size;
+    const uniqueTodayIPs = new Set(visits.filter(v => v.day === today).map(v => v.ip)).size;
+
+    const users = db.users || [];
+    const totalUsers = users.length;
+    const googleUsers = users.filter(u => u.google_id).length;
+    const emailUsers = users.filter(u => u.password).length;
+
+    res.json({
+        success: true,
+        stats: {
+            totalVisits,
+            todayVisits,
+            uniqueVisitors: uniqueIPs,
+            uniqueTodayVisitors: uniqueTodayIPs,
+            totalUsers,
+            googleUsers,
+            emailUsers
+        }
+    });
+});
+
+app.get("/api/admin/users", adminAuth, (req, res) => {
+    const users = (db.users || []).map(u => ({
+        id: u.id,
+        name: u.name,
+        email: u.email,
+        avatar: u.avatar,
+        google_id: !!u.google_id,
+        created_at: u.created_at
+    }));
+
+    res.json({ success: true, users });
+});
+
+app.get("/api/admin/visits", adminAuth, (req, res) => {
+    const visits = (db.visits || [])
+        .slice(-100)
+        .reverse()
+        .map(v => ({
+            ip: v.ip,
+            path: v.path,
+            day: v.day,
+            date: v.date,
+            hasUser: !!v.user_id
+        }));
+
+    res.json({ success: true, visits });
+});
+
+// Serve admin dashboard
+app.get("/admin", adminAuth, (req, res) => {
+    const adminPath = path.join(__dirname, "admin.html");
+    if (fs.existsSync(adminPath)) {
+        res.sendFile(adminPath);
+    } else {
+        res.status(404).send("admin.html not found");
+    }
+});
+
 app.listen(PORT, () => {
   console.log("Servidor iniciado en el puerto " + PORT);
 });
